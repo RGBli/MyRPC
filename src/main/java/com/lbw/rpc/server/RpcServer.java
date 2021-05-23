@@ -11,7 +11,6 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import org.apache.commons.collections4.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -45,13 +44,14 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
 
     @Override
     public void setApplicationContext(ApplicationContext ctx) throws BeansException {
-        // 扫描带有 RpcService 注解的类并初始化 handlerMap 对象
+        // 扫描带有 RpcService 注解的类，并初始化 handlerMap 对象
         Map<String, Object> serviceBeanMap = ctx.getBeansWithAnnotation(RpcService.class);
-        if (MapUtils.isNotEmpty(serviceBeanMap)) {
+        if (serviceBeanMap.size() != 0) {
             for (Object serviceBean : serviceBeanMap.values()) {
                 RpcService rpcService = serviceBean.getClass().getAnnotation(RpcService.class);
                 String serviceName = rpcService.value().getName();
                 String serviceVersion = rpcService.version();
+                // 如果在注解中指定了服务的版本号，则在原服务名末尾加-{serviceVersion}
                 if (StringUtil.isNotEmpty(serviceVersion)) {
                     serviceName += "-" + serviceVersion;
                 }
@@ -90,10 +90,10 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
             if (serviceRegistry != null) {
                 for (String interfaceName : handlerMap.keySet()) {
                     serviceRegistry.register(interfaceName, serviceAddress);
-                    LOGGER.debug("register service: {} => {}", interfaceName, serviceAddress);
+                    LOGGER.info("register service: {} => {}", interfaceName, serviceAddress);
                 }
             }
-            LOGGER.debug("server started on port {}", port);
+            LOGGER.info("server started on port {}", port);
             // 关闭 RPC 服务器
             future.channel().closeFuture().sync();
         } finally {

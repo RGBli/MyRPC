@@ -31,6 +31,7 @@ public class RpcServerHandler extends SimpleChannelInboundHandler<RpcRequest> {
         RpcResponse response = new RpcResponse();
         response.setRequestId(request.getRequestId());
         try {
+            // 服务器通过反射调用本地方法
             Object result = handle(request);
             response.setResult(result);
         } catch (Exception e) {

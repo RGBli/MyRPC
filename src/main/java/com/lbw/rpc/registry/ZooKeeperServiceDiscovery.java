@@ -1,6 +1,5 @@
 package com.lbw.rpc.registry;
 
-import com.lbw.rpc.common.util.CollectionUtil;
 import org.I0Itec.zkclient.ZkClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +24,7 @@ public class ZooKeeperServiceDiscovery implements ServiceDiscovery {
     public String discover(String name) {
         // 创建 ZooKeeper 客户端
         ZkClient zkClient = new ZkClient(zkAddress, Constant.ZK_SESSION_TIMEOUT, Constant.ZK_CONNECTION_TIMEOUT);
-        LOGGER.debug("connect zookeeper");
+        LOGGER.debug("connect to zookeeper");
         try {
             // 获取 service 节点
             String servicePath = Constant.ZK_REGISTRY_PATH + "/" + name;
@@ -33,7 +32,7 @@ public class ZooKeeperServiceDiscovery implements ServiceDiscovery {
                 throw new RuntimeException(String.format("can not find any service node on path: %s", servicePath));
             }
             List<String> addressList = zkClient.getChildren(servicePath);
-            if (CollectionUtil.isEmpty(addressList)) {
+            if (addressList == null || addressList.size() == 0) {
                 throw new RuntimeException(String.format("can not find any address node on path: %s", servicePath));
             }
             // 获取 address 节点
@@ -42,11 +41,12 @@ public class ZooKeeperServiceDiscovery implements ServiceDiscovery {
             if (size == 1) {
                 // 若只有一个地址，则获取该地址
                 address = addressList.get(0);
-                LOGGER.debug("get only address node: {}", address);
+                LOGGER.info("get only address node: {}", address);
             } else {
                 // 若存在多个地址，则随机获取一个地址
+                // 使用了随机的负载均衡策略
                 address = addressList.get(ThreadLocalRandom.current().nextInt(size));
-                LOGGER.debug("get random address node: {}", address);
+                LOGGER.info("get random address node: {}", address);
             }
             // 获取 address 节点的值
             String addressPath = servicePath + "/" + address;

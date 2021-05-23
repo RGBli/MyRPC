@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 序列化工具类（基于 Protostuff 实现）
+ * 序列化工具类，基于 Protostuff 实现
  */
 public class SerializationUtil {
 

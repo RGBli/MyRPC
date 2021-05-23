@@ -6,7 +6,9 @@ package com.lbw.rpc.common.model;
 public class RpcResponse {
 
     private String requestId;
+
     private Exception exception;
+
     private Object result;
 
     public boolean hasException() {
