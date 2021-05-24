@@ -15,14 +15,14 @@ public class ZooKeeperServiceRegistry implements ServiceRegistry {
 
     public ZooKeeperServiceRegistry(String zkAddress) {
         // 创建 ZooKeeper 客户端
-        zkClient = new ZkClient(zkAddress, Constant.ZK_SESSION_TIMEOUT, Constant.ZK_CONNECTION_TIMEOUT);
+        zkClient = new ZkClient(zkAddress, ZKConstant.ZK_SESSION_TIMEOUT, ZKConstant.ZK_CONNECTION_TIMEOUT);
         LOGGER.info("connect to zookeeper");
     }
 
     @Override
     public void register(String serviceName, String serviceAddress) {
         // 如果 registry 节点不存在，则创建一个 registry 节点（持久）
-        String registryPath = Constant.ZK_REGISTRY_PATH;
+        String registryPath = ZKConstant.ZK_REGISTRY_PATH;
         if (!zkClient.exists(registryPath)) {
             zkClient.createPersistent(registryPath);
             LOGGER.info("create registry node: {}", registryPath);

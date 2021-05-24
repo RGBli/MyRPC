@@ -1,19 +1,17 @@
 # MyRPC
 ---
 ### 1.介绍
-MyRPC 是基于 Netty 框架编写的、使用 Zookeeper 来进行服务注册和服务发现的分布式 RPC 框架。
+MyRPC 是基于 Netty 和 Spring 框架编写的、使用 Zookeeper 来进行服务注册和服务发现的分布式 RPC 框架。
 <br/><br/>
 
 ### 2.技术点
-1）动态代理
+1）Netty 和 Spring 框架
 
-2）反射
+2）Zookeeper 配置和操作，临时节点和持久节点
 
-3）Zookeeper 配置和操作
+3）Protobuf 序列化方法
 
-4）Protobuf 序列化方法
-
-5）Netty 框架的使用
+4）反射和动态代理
 <br/><br/>
 
 ### 3.未来改进
@@ -26,3 +24,4 @@ MyRPC 是基于 Netty 框架编写的、使用 Zookeeper 来进行服务注册�
 
 ### 4.参考文章
 https://gitee.com/huangyong/rpc
+https://my.oschina.net/huangyong/blog/361751

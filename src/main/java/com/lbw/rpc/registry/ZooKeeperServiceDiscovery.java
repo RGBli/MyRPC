@@ -23,11 +23,11 @@ public class ZooKeeperServiceDiscovery implements ServiceDiscovery {
     @Override
     public String discover(String name) {
         // 创建 ZooKeeper 客户端
-        ZkClient zkClient = new ZkClient(zkAddress, Constant.ZK_SESSION_TIMEOUT, Constant.ZK_CONNECTION_TIMEOUT);
+        ZkClient zkClient = new ZkClient(zkAddress, ZKConstant.ZK_SESSION_TIMEOUT, ZKConstant.ZK_CONNECTION_TIMEOUT);
         LOGGER.debug("connect to zookeeper");
         try {
             // 获取 service 节点
-            String servicePath = Constant.ZK_REGISTRY_PATH + "/" + name;
+            String servicePath = ZKConstant.ZK_REGISTRY_PATH + "/" + name;
             if (!zkClient.exists(servicePath)) {
                 throw new RuntimeException(String.format("can not find any service node on path: %s", servicePath));
             }
