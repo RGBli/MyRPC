@@ -29,7 +29,7 @@ public class ZooKeeperServiceRegistry implements ServiceRegistry {
             zkClient.createPersistent(registryPath);
             LOGGER.info("Create registry node: {}", registryPath);
         }
-        // 如果 service 节点不存在则创建（持久）
+        // 如果 service 节点不存在则创建（持久），serviceName 的格式为接口的全限定名-版本号
         String servicePath = registryPath + "/" + serviceName;
         if (!zkClient.exists(servicePath)) {
             zkClient.createPersistent(servicePath);
@@ -37,7 +37,7 @@ public class ZooKeeperServiceRegistry implements ServiceRegistry {
         }
         // 创建 address 节点（临时）
         String addressPath = servicePath + "/address-";
-        // 向节点写入服务地址，ip:port，创建临时节点时会自动给路径名后面加上序号
+        // 向节点写入服务地址，格式为 ip:port，创建临时节点时会自动给路径名后面加上序号
         String addressNode = zkClient.createEphemeralSequential(addressPath, serviceAddress);
         LOGGER.info("Create address node: {}", addressNode);
     }
