@@ -2,7 +2,6 @@ package com.lbw.rpc.client;
 
 import com.lbw.rpc.common.model.RpcRequest;
 import com.lbw.rpc.common.model.RpcResponse;
-import com.lbw.rpc.common.util.StringUtil;
 import com.lbw.rpc.registry.ServiceDiscovery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,26 +51,26 @@ public class RpcProxy {
                         // 获取 RPC 服务地址
                         if (serviceDiscovery != null) {
                             String serviceName = interfaceClass.getName();
-                            if (StringUtil.isNotEmpty(serviceVersion)) {
+                            if (serviceVersion != null && !serviceVersion.isEmpty()) {
                                 serviceName += "-" + serviceVersion;
                             }
                             serviceAddress = serviceDiscovery.discover(serviceName);
-                            LOGGER.debug("discover service: {} => {}", serviceName, serviceAddress);
+                            LOGGER.info("Discover service: {} => {}", serviceName, serviceAddress);
                         }
-                        if (StringUtil.isEmpty(serviceAddress)) {
-                            throw new RuntimeException("server address is empty");
+                        if (serviceAddress == null || serviceVersion.isEmpty()) {
+                            throw new RuntimeException("Server address is empty");
                         }
                         // 从 RPC 服务地址中解析主机名与端口号
-                        String[] array = StringUtil.split(serviceAddress, ":");
-                        String host = array[0];
-                        int port = Integer.parseInt(array[1]);
+                        String[] hostPort = serviceAddress.split(":");
+                        String host = hostPort[0];
+                        int port = Integer.parseInt(hostPort[1]);
                         // 创建 RPC 客户端对象并发送 RPC 请求
                         RpcClient client = new RpcClient(host, port);
                         long time = System.currentTimeMillis();
                         RpcResponse response = client.send(request);
-                        LOGGER.debug("time: {}ms", System.currentTimeMillis() - time);
+                        LOGGER.info("Time: {}ms", System.currentTimeMillis() - time);
                         if (response == null) {
-                            throw new RuntimeException("response is null");
+                            throw new RuntimeException("Response is null");
                         }
                         // 返回 RPC 响应结果
                         if (response.hasException()) {

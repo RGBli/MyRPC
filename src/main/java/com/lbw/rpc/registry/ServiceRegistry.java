@@ -5,8 +5,6 @@ package com.lbw.rpc.registry;
  */
 public interface ServiceRegistry {
 
-    /**
-     * 注册服务名称与服务地址
-     */
+    // 注册服务名称与服务地址
     void register(String serviceName, String serviceAddress);
 }

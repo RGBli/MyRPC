@@ -20,6 +20,7 @@ public class RpcClient extends SimpleChannelInboundHandler<RpcResponse> {
     private static final Logger LOGGER = LoggerFactory.getLogger(RpcClient.class);
 
     private final String host;
+
     private final int port;
 
     private RpcResponse response;
@@ -29,6 +30,7 @@ public class RpcClient extends SimpleChannelInboundHandler<RpcResponse> {
         this.port = port;
     }
 
+    // 读取传来的 RpcResponse
     @Override
     public void channelRead0(ChannelHandlerContext ctx, RpcResponse response) {
         this.response = response;
@@ -36,7 +38,7 @@ public class RpcClient extends SimpleChannelInboundHandler<RpcResponse> {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        LOGGER.error("api caught exception", cause);
+        LOGGER.error("Api caught exception", cause);
         ctx.close();
     }
 

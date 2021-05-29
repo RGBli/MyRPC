@@ -2,7 +2,6 @@ package com.lbw.rpc.server;
 
 import com.lbw.rpc.common.model.RpcRequest;
 import com.lbw.rpc.common.model.RpcResponse;
-import com.lbw.rpc.common.util.StringUtil;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -26,16 +25,17 @@ public class RpcServerHandler extends SimpleChannelInboundHandler<RpcRequest> {
     }
 
     @Override
-    public void channelRead0(final ChannelHandlerContext ctx, RpcRequest request) throws Exception {
+    public void channelRead0(final ChannelHandlerContext ctx, RpcRequest request) {
         // 创建并初始化 RPC 响应对象
         RpcResponse response = new RpcResponse();
+        // 根据 requestId 设置 responseId
         response.setRequestId(request.getRequestId());
         try {
             // 服务器通过反射调用本地方法
             Object result = handle(request);
             response.setResult(result);
         } catch (Exception e) {
-            LOGGER.error("handle result failure", e);
+            LOGGER.error("Handle result failure", e);
             response.setException(e);
         }
         // 写入 RPC 响应对象并自动关闭连接
@@ -46,12 +46,12 @@ public class RpcServerHandler extends SimpleChannelInboundHandler<RpcRequest> {
         // 获取服务对象
         String serviceName = request.getInterfaceName();
         String serviceVersion = request.getServiceVersion();
-        if (StringUtil.isNotEmpty(serviceVersion)) {
+        if (serviceVersion != null && !serviceVersion.isEmpty()) {
             serviceName += "-" + serviceVersion;
         }
         Object serviceBean = handlerMap.get(serviceName);
         if (serviceBean == null) {
-            throw new RuntimeException(String.format("can not find service bean by key: %s", serviceName));
+            throw new RuntimeException(String.format("Cannot find service bean by key: %s", serviceName));
         }
         // 获取反射调用所需的参数
         Class<?> serviceClass = serviceBean.getClass();
@@ -70,7 +70,7 @@ public class RpcServerHandler extends SimpleChannelInboundHandler<RpcRequest> {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        LOGGER.error("server caught exception", cause);
+        LOGGER.error("Server caught exception", cause);
         ctx.close();
     }
 }

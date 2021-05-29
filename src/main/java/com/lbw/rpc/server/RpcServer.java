@@ -4,7 +4,6 @@ import com.lbw.rpc.common.codec.RpcDecoder;
 import com.lbw.rpc.common.codec.RpcEncoder;
 import com.lbw.rpc.common.model.RpcRequest;
 import com.lbw.rpc.common.model.RpcResponse;
-import com.lbw.rpc.common.util.StringUtil;
 import com.lbw.rpc.registry.ServiceRegistry;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
@@ -32,9 +31,7 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
 
     private ServiceRegistry serviceRegistry;
 
-    /**
-     * 存放服务名与服务对象之间的映射关系
-     */
+    // 存放服务名与服务对象之间的映射关系
     private Map<String, Object> handlerMap = new HashMap<>();
 
     public RpcServer(String serviceAddress, ServiceRegistry serviceRegistry) {
@@ -51,8 +48,8 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
                 RpcService rpcService = serviceBean.getClass().getAnnotation(RpcService.class);
                 String serviceName = rpcService.value().getName();
                 String serviceVersion = rpcService.version();
-                // 如果在注解中指定了服务的版本号，则在原服务名末尾加-{serviceVersion}
-                if (StringUtil.isNotEmpty(serviceVersion)) {
+                // 如果在注解中指定了服务的版本号，则在原服务名末尾加 -serviceVersion
+                if (!serviceVersion.isEmpty()) {
                     serviceName += "-" + serviceVersion;
                 }
                 handlerMap.put(serviceName, serviceBean);
@@ -81,19 +78,19 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
             bootstrap.option(ChannelOption.SO_BACKLOG, 1024);
             bootstrap.childOption(ChannelOption.SO_KEEPALIVE, true);
             // 获取 RPC 服务器的 IP 地址与端口号
-            String[] addressArray = StringUtil.split(serviceAddress, ":");
-            String ip = addressArray[0];
-            int port = Integer.parseInt(addressArray[1]);
+            String[] hostPort = serviceAddress.split(":");
+            String ip = hostPort[0];
+            int port = Integer.parseInt(hostPort[1]);
             // 启动 RPC 服务器
             ChannelFuture future = bootstrap.bind(ip, port).sync();
             // 注册 RPC 服务地址
             if (serviceRegistry != null) {
                 for (String interfaceName : handlerMap.keySet()) {
                     serviceRegistry.register(interfaceName, serviceAddress);
-                    LOGGER.info("register service: {} => {}", interfaceName, serviceAddress);
+                    LOGGER.info("Register service: {} => {}", interfaceName, serviceAddress);
                 }
             }
-            LOGGER.info("server started on port {}", port);
+            LOGGER.info("Server started on port {}", port);
             // 关闭 RPC 服务器
             future.channel().closeFuture().sync();
         } finally {

@@ -5,8 +5,6 @@ package com.lbw.rpc.registry;
  */
 public interface ServiceDiscovery {
 
-    /**
-     * 根据服务名称查找服务地址
-     */
+    // 根据服务名称查找服务地址
     String discover(String serviceName);
 }

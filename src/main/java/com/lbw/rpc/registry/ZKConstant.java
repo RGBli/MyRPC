@@ -1,7 +1,7 @@
 package com.lbw.rpc.registry;
 
 /**
- * 常量
+ * ZooKeeper 的常量
  */
 public class ZKConstant {
 

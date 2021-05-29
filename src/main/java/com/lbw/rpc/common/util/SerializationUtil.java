@@ -19,8 +19,7 @@ public class SerializationUtil {
 
     private static Objenesis objenesis = new ObjenesisStd(true);
 
-    private SerializationUtil() {
-    }
+    private SerializationUtil() {}
 
     // 序列化（对象 -> 字节数组）
     @SuppressWarnings("unchecked")
