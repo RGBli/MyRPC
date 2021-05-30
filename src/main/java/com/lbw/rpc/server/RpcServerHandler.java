@@ -58,14 +58,11 @@ public class RpcServerHandler extends SimpleChannelInboundHandler<RpcRequest> {
         String methodName = request.getMethodName();
         Class<?>[] parameterTypes = request.getParameterTypes();
         Object[] parameters = request.getParameters();
-        // 执行反射调用
         Method method = serviceClass.getMethod(methodName, parameterTypes);
+        // 禁用 Java 的语言访问检查，提高反射调用的速度
         method.setAccessible(true);
+        // 执行反射调用
         return method.invoke(serviceBean, parameters);
-        /*// 使用 CGLib 执行反射调用
-        FastClass serviceFastClass = FastClass.create(serviceClass);
-        FastMethod serviceFastMethod = serviceFastClass.getMethod(methodName, parameterTypes);
-        return serviceFastMethod.invoke(serviceBean, parameters);*/
     }
 
     @Override
