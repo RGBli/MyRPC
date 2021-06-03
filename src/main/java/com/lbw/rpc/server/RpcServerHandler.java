@@ -12,7 +12,8 @@ import java.lang.reflect.Method;
 import java.util.Map;
 
 /**
- * RPC 服务端处理器（用于处理 RPC 请求）
+ * RPC 服务端处理器
+ * 用于处理 RPC 请求
  */
 public class RpcServerHandler extends SimpleChannelInboundHandler<RpcRequest> {
 

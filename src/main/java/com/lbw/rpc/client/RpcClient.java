@@ -13,7 +13,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * RPC 客户端（用于发送 RPC 请求）
+ * RPC 客户端
+ * 用于发送 RPC 请求，并接收来自 Server 端的响应
+ * 继承了 SimpleChannelInboundHandler 类，该类又继承了 ChannelHandlerAdapter 类
  */
 public class RpcClient extends SimpleChannelInboundHandler<RpcResponse> {
 
@@ -42,6 +44,7 @@ public class RpcClient extends SimpleChannelInboundHandler<RpcResponse> {
         ctx.close();
     }
 
+    // 使用 Netty 来发送 RpcRequest 并获取服务器返回的 RpcResponse
     public RpcResponse send(RpcRequest request) throws Exception {
         EventLoopGroup group = new NioEventLoopGroup();
         try {
@@ -58,7 +61,7 @@ public class RpcClient extends SimpleChannelInboundHandler<RpcResponse> {
                             pipeline.addLast(new RpcEncoder(RpcRequest.class));
                             // 解码 RPC 响应
                             pipeline.addLast(new RpcDecoder(RpcResponse.class));
-                            // 处理 RPC 响应
+                            // 处理 RPC 响应，该类继承了 ChannelHandlerAdapter 类，故可以直接作为 Handler
                             pipeline.addLast(RpcClient.this);
                         }
                     });
